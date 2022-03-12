@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import _ from "lodash";
 import React from "react";
@@ -7,6 +8,8 @@ import { UserSignIn_API } from "../../api/UserAuth.api";
 import { ValidateEmail } from "../../utils/HandleValidation";
 
 const SignIn = () => {
+    const navigate = useNavigate();
+
     const {
         handleSubmit,
         control,
@@ -20,14 +23,18 @@ const SignIn = () => {
 
     const handleUserSignIn = (data) => {
         console.log("Signed In!", data);
+        navigate("/");
     };
 
-    const { mutate, isLoading } = useMutation(UserSignIn_API, {
-        onSuccess: handleUserSignIn,
-    });
+    const { mutate: userSignInMutation, isLoading } = useMutation(
+        UserSignIn_API,
+        {
+            onSuccess: handleUserSignIn,
+        }
+    );
 
     const onSubmit = (data) => {
-        mutate(data);
+        userSignInMutation(data);
     };
 
     return (
