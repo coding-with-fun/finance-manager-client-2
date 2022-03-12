@@ -3,6 +3,7 @@ import {
     Login as SignInIcon,
     Logout as SignOutIcon,
     Person as PersonIcon,
+    AccountBalance as AccountsIcon,
 } from "@mui/icons-material";
 import {
     Box,
@@ -43,6 +44,11 @@ let UpperSidebarLinks = [
         title: "Dashboard",
         path: "/dashboard",
         icon: <HomeIcon />,
+    },
+    {
+        title: "Accounts",
+        path: "/accounts",
+        icon: <AccountsIcon />,
     },
     {
         title: "Profile",

@@ -1,6 +1,13 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { Dashboard, Home, Profile, SignIn, SignUp } from "../../pages";
+import {
+    Accounts,
+    Dashboard,
+    Home,
+    Profile,
+    SignIn,
+    SignUp,
+} from "../../pages";
 import PrivateRouter from "./PrivateRouter";
 import PublicRouter from "./PublicRouter";
 
@@ -48,6 +55,15 @@ const IndexRouter = () => {
                 element={
                     <PrivateRouter>
                         <Profile />
+                    </PrivateRouter>
+                }
+            />
+
+            <Route
+                path="/accounts"
+                element={
+                    <PrivateRouter>
+                        <Accounts />
                     </PrivateRouter>
                 }
             />

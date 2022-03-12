@@ -24,7 +24,6 @@ export const UserDataProvider = ({ children }) => {
             handleSetUserData(body);
         },
         enabled: false,
-        cacheTime: 3600000,
     });
 
     useEffect(() => {
