@@ -4,12 +4,13 @@ import _ from "lodash";
 import React, { useContext } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { UserSignIn_API } from "../../api/UserAuth.api";
+import { UserSignUp_API } from "../../api/UserAuth.api";
 import { ValidateEmail } from "../../utils/HandleValidation";
 import { UserDataContext } from "../../contexts/UserDataContext";
 
-const SignIn = () => {
+const SignUp = () => {
     const { handleSetUserData } = useContext(UserDataContext);
+
     const navigate = useNavigate();
 
     const {
@@ -18,12 +19,16 @@ const SignIn = () => {
         formState: { errors },
     } = useForm({
         defaultValues: {
+            firstName: "",
+            lastName: "",
+            username: "",
             email: "",
             password: "",
+            confirmationPassword: "",
         },
     });
 
-    const handleUserSignIn = (data) => {
+    const handleUserSignUp = (data) => {
         const { name, email, username } = _.get(data, "data.user");
         handleSetUserData(
             {
@@ -37,15 +42,19 @@ const SignIn = () => {
         );
     };
 
-    const { mutate: userSignInMutation, isLoading } = useMutation(
-        UserSignIn_API,
+    const { mutate: userSignUpMutation, isLoading } = useMutation(
+        UserSignUp_API,
         {
-            onSuccess: handleUserSignIn,
+            onSuccess: handleUserSignUp,
         }
     );
 
     const onSubmit = (data) => {
-        userSignInMutation(data);
+        const body = {
+            ...data,
+            name: `${data.firstName} ${data.lastName}`.trim(),
+        };
+        userSignUpMutation(body);
     };
 
     return (
@@ -65,7 +74,7 @@ const SignIn = () => {
                     my: "1rem",
                 }}
             >
-                Sign In
+                Sign Up
             </Typography>
 
             <Box
@@ -78,6 +87,57 @@ const SignIn = () => {
                     gap: "1rem",
                 }}
             >
+                <Controller
+                    name="firstName"
+                    control={control}
+                    rules={{
+                        required: "First name is required.",
+                    }}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="First Name"
+                            autoComplete="firstName"
+                            error={_.has(errors, "firstName")}
+                            helperText={_.get(errors, "firstName.message")}
+                            disabled={isLoading}
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="lastName"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="Last Name"
+                            autoComplete="lastName"
+                            error={_.has(errors, "lastName")}
+                            helperText={_.get(errors, "lastName.message")}
+                            disabled={isLoading}
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="username"
+                    control={control}
+                    rules={{
+                        required: "Username is required.",
+                    }}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="Username"
+                            autoComplete="username"
+                            error={_.has(errors, "username")}
+                            helperText={_.get(errors, "username.message")}
+                            disabled={isLoading}
+                        />
+                    )}
+                />
+
                 <Controller
                     name="email"
                     control={control}
@@ -118,6 +178,28 @@ const SignIn = () => {
                     )}
                 />
 
+                <Controller
+                    name="confirmationPassword"
+                    control={control}
+                    rules={{
+                        required: "Confirmation Password is required.",
+                    }}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            type="password"
+                            label="Confirm Password"
+                            autoComplete="confirmationPassword"
+                            error={_.has(errors, "confirmationPassword")}
+                            helperText={_.get(
+                                errors,
+                                "confirmationPassword.message"
+                            )}
+                            disabled={isLoading}
+                        />
+                    )}
+                />
+
                 <Button
                     type="submit"
                     variant="outlined"
@@ -127,11 +209,11 @@ const SignIn = () => {
                         isLoading
                     }
                 >
-                    Sign In
+                    Sign Up
                 </Button>
             </Box>
         </Container>
     );
 };
 
-export default SignIn;
+export default SignUp;

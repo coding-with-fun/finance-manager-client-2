@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GetUserToken } from "../utils/HandleUserToken";
+import { GetUserToken, SetUserToken } from "../utils/HandleUserToken";
 import { BACKEND_URL } from "../utils/constants";
 import { Toastify } from "../utils/Toastify";
 import _ from "lodash";
@@ -9,8 +9,8 @@ axios.interceptors.request.use(
     function (config) {
         // Do something before request is sent
         const token = GetUserToken();
-        config.headers["Authorization"] = "Bearer " + token;
         if (token) {
+            config.headers["Authorization"] = "Bearer " + token;
         }
 
         config.headers["Content-Type"] = "application/json";
@@ -39,6 +39,8 @@ axios.interceptors.response.use(
         });
 
         if (response.success) {
+            console.log(response);
+            SetUserToken(_.get(response, "data.token"));
             return response;
         }
 

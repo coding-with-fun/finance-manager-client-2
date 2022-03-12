@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
+import { UserDataProvider } from "./contexts/UserDataContext";
 import "./index.css";
 
 const theme = createTheme({
@@ -19,9 +20,12 @@ const queryClient = new QueryClient();
 
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
+        <UserDataProvider>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <App />
+            </ThemeProvider>
+
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -34,8 +38,9 @@ ReactDOM.render(
                 pauseOnHover
                 theme="colored"
             />
-        </ThemeProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
+
+            <ReactQueryDevtools initialIsOpen={false} />
+        </UserDataProvider>
     </QueryClientProvider>,
 
     document.getElementById("root")
