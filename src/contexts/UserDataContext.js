@@ -10,11 +10,13 @@ export const UserDataProvider = ({ children }) => {
     const userToken = GetUserToken();
 
     const [userData, setUserData] = useState({
+        _id: "",
         firstName: "",
         lastName: "",
         email: "",
         username: "",
     });
+    const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
 
     const { refetch } = useQuery("fetch-user-data", FetchUserDetails_API, {
         onSuccess: (data) => {
@@ -22,6 +24,7 @@ export const UserDataProvider = ({ children }) => {
             handleSetUserData(body);
         },
         enabled: false,
+        cacheTime: 3600000,
     });
 
     useEffect(() => {
@@ -32,6 +35,7 @@ export const UserDataProvider = ({ children }) => {
 
     const handleSetUserData = (data, cb) => {
         setUserData(data);
+        setIsUserAuthenticated(true);
 
         if (cb) cb();
     };
@@ -40,8 +44,10 @@ export const UserDataProvider = ({ children }) => {
         <UserDataContext.Provider
             value={{
                 userData,
+                isUserAuthenticated,
 
                 handleSetUserData,
+                setIsUserAuthenticated,
             }}
         >
             {children}

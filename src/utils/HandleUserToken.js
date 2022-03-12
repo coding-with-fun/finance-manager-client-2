@@ -8,6 +8,8 @@ export const SetUserToken = (token) => {
     localStorage.setItem(TOKEN_ID, token);
 };
 
-export const RemoveUserToken = () => {
+export const RemoveUserToken = (cb) => {
     localStorage.removeItem(TOKEN_ID);
+
+    if (cb) cb();
 };
