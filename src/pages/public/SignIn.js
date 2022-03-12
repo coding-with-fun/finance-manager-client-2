@@ -1,7 +1,9 @@
-import { Controller, useForm } from "react-hook-form";
-import React from "react";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import _ from "lodash";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { UserSignIn_API } from "../../api/UserAuth.api";
 import { ValidateEmail } from "../../utils/HandleValidation";
 
 const SignIn = () => {
@@ -16,7 +18,17 @@ const SignIn = () => {
         },
     });
 
-    const onSubmit = (data) => console.log(data);
+    const handleUserSignIn = (data) => {
+        console.log("Signed In!", data);
+    };
+
+    const { mutate, isLoading } = useMutation(UserSignIn_API, {
+        onSuccess: handleUserSignIn,
+    });
+
+    const onSubmit = (data) => {
+        mutate(data);
+    };
 
     return (
         <Container
@@ -64,6 +76,7 @@ const SignIn = () => {
                             autoComplete="email"
                             error={_.has(errors, "email")}
                             helperText={_.get(errors, "email.message")}
+                            disabled={isLoading}
                         />
                     )}
                 />
@@ -82,6 +95,7 @@ const SignIn = () => {
                             autoComplete="password"
                             error={_.has(errors, "password")}
                             helperText={_.get(errors, "password.message")}
+                            disabled={isLoading}
                         />
                     )}
                 />
@@ -90,7 +104,9 @@ const SignIn = () => {
                     type="submit"
                     variant="outlined"
                     disabled={
-                        _.has(errors, "email") || _.has(errors, "password")
+                        _.has(errors, "email") ||
+                        _.has(errors, "password") ||
+                        isLoading
                     }
                 >
                     Submit
