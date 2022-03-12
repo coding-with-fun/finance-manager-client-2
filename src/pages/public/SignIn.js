@@ -24,17 +24,11 @@ const SignIn = () => {
     });
 
     const handleUserSignIn = (data) => {
-        const { name, email, username } = _.get(data, "data.user");
-        handleSetUserData(
-            {
-                name,
-                email,
-                username,
-            },
-            () => {
-                navigate("/");
-            }
-        );
+        const userDetails = _.get(data, "data.user");
+
+        handleSetUserData(userDetails, () => {
+            navigate("/dashboard");
+        });
     };
 
     const { mutate: userSignInMutation, isLoading } = useMutation(

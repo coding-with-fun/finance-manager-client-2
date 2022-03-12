@@ -1,6 +1,6 @@
 import request from "../config/AxiosInterceptor";
 
-let BASE_URL = "/auth";
+const BASE_URL = "/auth";
 
 export const UserSignIn_API = (data) => {
     return request({

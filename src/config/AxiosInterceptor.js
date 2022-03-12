@@ -1,5 +1,9 @@
 import axios from "axios";
-import { GetUserToken, SetUserToken } from "../utils/HandleUserToken";
+import {
+    GetUserToken,
+    RemoveUserToken,
+    SetUserToken,
+} from "../utils/HandleUserToken";
 import { BACKEND_URL } from "../utils/constants";
 import { Toastify } from "../utils/Toastify";
 import _ from "lodash";
@@ -8,6 +12,8 @@ import _ from "lodash";
 axios.interceptors.request.use(
     function (config) {
         // Do something before request is sent
+
+        // Add user token to every request.
         const token = GetUserToken();
         if (token) {
             config.headers["Authorization"] = "Bearer " + token;
@@ -39,17 +45,24 @@ axios.interceptors.response.use(
         });
 
         if (response.success) {
-            console.log(response);
-            SetUserToken(_.get(response, "data.token"));
+            // Set user token if the token is present in response.
+            const userToken = _.get(response, "data.token");
+            if (userToken) SetUserToken(userToken);
+
             return response;
         }
 
+        // Remove token if the response has error.
+        RemoveUserToken();
         throw response;
     },
     function (error) {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
         console.log(error.response);
+
+        // Remove token if the response has error.
+        RemoveUserToken();
 
         const commonStatusCodes = [404, 500];
         let message = _.get(error, "response.data.message");

@@ -1,11 +1,13 @@
+import { TOKEN_ID } from "./constants";
+
 export const GetUserToken = () => {
-    return localStorage.getItem("fi-plan-user-token");
+    return localStorage.getItem(TOKEN_ID);
 };
 
 export const SetUserToken = (token) => {
-    localStorage.setItem("fi-plan-user-token", token);
+    localStorage.setItem(TOKEN_ID, token);
 };
 
 export const RemoveUserToken = () => {
-    localStorage.removeItem("fi-plan-user-token");
+    localStorage.removeItem(TOKEN_ID);
 };

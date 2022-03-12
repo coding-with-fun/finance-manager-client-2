@@ -37,7 +37,7 @@ const SignUp = () => {
                 username,
             },
             () => {
-                navigate("/");
+                navigate("/dashboard");
             }
         );
     };
@@ -50,11 +50,7 @@ const SignUp = () => {
     );
 
     const onSubmit = (data) => {
-        const body = {
-            ...data,
-            name: `${data.firstName} ${data.lastName}`.trim(),
-        };
-        userSignUpMutation(body);
+        userSignUpMutation(data);
     };
 
     return (
