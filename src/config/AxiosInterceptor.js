@@ -30,18 +30,17 @@ axios.interceptors.response.use(
         // Do something with response data
         response = response.data;
 
-        let message = _.get(response, "message");
-        let type = "error";
-
-        if (response.success) {
-            type = "success";
-            return response;
-        }
+        const message = _.get(response, "message");
+        const type = response.success ? "success" : "error";
 
         Toastify({
             message,
             type,
         });
+
+        if (response.success) {
+            return response;
+        }
 
         throw response;
     },
