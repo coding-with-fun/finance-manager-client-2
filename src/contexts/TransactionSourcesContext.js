@@ -13,11 +13,17 @@ export const TransactionSourcesProvider = ({ children }) => {
     const [pageNumber, setPageNumber] = useState(0);
     const [perPage, setPerPage] = useState(5);
     const [count, setCount] = useState(0);
+    const [sortBy, setSortBy] = useState({
+        sortField: "createdAt",
+        sortType: "asc",
+    });
 
     const params = {
         pageNumber,
         perPage,
         count,
+        sortField: sortBy.sortField,
+        sortType: sortBy.sortType,
     };
 
     const { refetch: refetchTransactionSources } = useQuery(
@@ -59,6 +65,13 @@ export const TransactionSourcesProvider = ({ children }) => {
 
     const handleChangePerPage = (data, cb) => {
         setPerPage(data);
+        setPageNumber(0);
+        if (cb) cb();
+    };
+
+    const handleChangeSortBy = (data, cb) => {
+        setSortBy(data);
+        setPageNumber(0);
         if (cb) cb();
     };
 
@@ -66,7 +79,7 @@ export const TransactionSourcesProvider = ({ children }) => {
         if (isUserAuthenticated) refetchTransactionSources();
 
         // eslint-disable-next-line
-    }, [isUserAuthenticated, pageNumber, perPage]);
+    }, [isUserAuthenticated, pageNumber, perPage, sortBy]);
 
     return (
         <TransactionSourcesContext.Provider
@@ -80,6 +93,7 @@ export const TransactionSourcesProvider = ({ children }) => {
                 handleUpdateTransactionSources,
                 handleChangePageNumber,
                 handleChangePerPage,
+                handleChangeSortBy,
                 refetchTransactionSources,
             }}
         >

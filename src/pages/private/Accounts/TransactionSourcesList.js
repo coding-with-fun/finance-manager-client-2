@@ -10,6 +10,7 @@ const TransactionSourcesList = () => {
         count,
         handleChangePageNumber,
         handleChangePerPage,
+        handleChangeSortBy,
     } = useContext(TransactionSourcesContext);
 
     const columns = [
@@ -41,19 +42,26 @@ const TransactionSourcesList = () => {
             <DataGrid
                 autoHeight
                 pagination
+                disableColumnFilter
                 pageSize={perPage}
                 rowCount={count}
-                onPageChange={(page) => {
-                    handleChangePageNumber(page);
-                }}
                 paginationMode="server"
                 rowsPerPageOptions={[1, 2, 5, 10, 20]}
-                onPageSizeChange={(newPageSize) =>
-                    handleChangePerPage(newPageSize)
-                }
                 rows={transactionSources}
                 columns={columns}
                 getRowId={(row) => row._id}
+                onPageChange={(page) => {
+                    handleChangePageNumber(page);
+                }}
+                onPageSizeChange={(newPageSize) =>
+                    handleChangePerPage(newPageSize)
+                }
+                onSortModelChange={(newOrder) => {
+                    handleChangeSortBy({
+                        sortField: newOrder[0]?.field || "createdAt",
+                        sortType: newOrder[0]?.sort || "asc",
+                    });
+                }}
             />
         </Box>
     );
