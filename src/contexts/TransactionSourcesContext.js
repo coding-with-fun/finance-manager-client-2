@@ -11,16 +11,14 @@ export const TransactionSourcesProvider = ({ children }) => {
 
     const [transactionSources, setTransactionSources] = useState([]);
     const [pageNumber, setPageNumber] = useState(0);
-    const [pageSize, setPageSize] = useState(5);
+    const [perPage, setPerPage] = useState(5);
     const [count, setCount] = useState(0);
 
     const params = {
         pageNumber,
-        perPage: pageSize,
+        perPage,
         count,
     };
-
-    console.log(params);
 
     const { refetch: refetchTransactionSources } = useQuery(
         ["fetch-transaction-sources", params],
@@ -32,7 +30,7 @@ export const TransactionSourcesProvider = ({ children }) => {
                 handleSetTransactionSources(transactionSources);
 
                 setPageNumber(pageNumber);
-                setPageSize(perPage);
+                setPerPage(perPage);
                 setCount(count);
             },
             enabled: false,
@@ -59,8 +57,8 @@ export const TransactionSourcesProvider = ({ children }) => {
         if (cb) cb();
     };
 
-    const handleChangePageSize = (data, cb) => {
-        setPageSize(data);
+    const handleChangePerPage = (data, cb) => {
+        setPerPage(data);
         if (cb) cb();
     };
 
@@ -68,20 +66,20 @@ export const TransactionSourcesProvider = ({ children }) => {
         if (isUserAuthenticated) refetchTransactionSources();
 
         // eslint-disable-next-line
-    }, [isUserAuthenticated]);
+    }, [isUserAuthenticated, pageNumber, perPage]);
 
     return (
         <TransactionSourcesContext.Provider
             value={{
                 transactionSources,
                 pageNumber,
-                pageSize,
+                perPage,
                 count,
 
                 handleSetTransactionSources,
                 handleUpdateTransactionSources,
                 handleChangePageNumber,
-                handleChangePageSize,
+                handleChangePerPage,
                 refetchTransactionSources,
             }}
         >

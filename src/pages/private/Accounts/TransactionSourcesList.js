@@ -6,12 +6,10 @@ import { TransactionSourcesContext } from "../../../contexts/TransactionSourcesC
 const TransactionSourcesList = () => {
     const {
         transactionSources,
-        pageNumber,
-        pageSize,
+        perPage,
         count,
         handleChangePageNumber,
-        handleChangePageSize,
-        refetchTransactionSources,
+        handleChangePerPage,
     } = useContext(TransactionSourcesContext);
 
     const columns = [
@@ -43,15 +41,15 @@ const TransactionSourcesList = () => {
             <DataGrid
                 autoHeight
                 pagination
-                pageSize={pageSize}
+                pageSize={perPage}
                 rowCount={count}
-                onPageChange={(page, details) => {
-                    handleChangePageNumber(page, refetchTransactionSources);
+                onPageChange={(page) => {
+                    handleChangePageNumber(page);
                 }}
                 paginationMode="server"
                 rowsPerPageOptions={[1, 2, 5, 10, 20]}
                 onPageSizeChange={(newPageSize) =>
-                    handleChangePageSize(newPageSize)
+                    handleChangePerPage(newPageSize)
                 }
                 rows={transactionSources}
                 columns={columns}
