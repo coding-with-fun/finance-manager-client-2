@@ -7,3 +7,14 @@ body {
 
     font-style: "Poppins", sans-serif;
 }
+
+:focus-visible,
+.MuiDataGrid-columnHeader:focus,
+.MuiDataGrid-cell:focus,
+.MuiInputBase-root:hover {
+    outline: none !important;
+}
+
+.MuiInputBase-root:hover {
+    border-color: transparent;
+}

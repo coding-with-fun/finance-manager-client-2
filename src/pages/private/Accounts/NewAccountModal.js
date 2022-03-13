@@ -3,17 +3,20 @@ import {
     Box,
     Button,
     Fade,
+    FormControl,
+    InputLabel,
+    MenuItem,
     Modal,
+    Select,
     TextField,
     Typography,
 } from "@mui/material";
 import _ from "lodash";
-import React, { useContext } from "react";
-import { Controller, useForm } from "react-hook-form";
+import React, { useContext, useState } from "react";
 import { useMutation } from "react-query";
 import { AddTransactionSource_API } from "../../../api/TransactionSource.api";
 import { TransactionSourcesContext } from "../../../contexts/TransactionSourcesContext";
-import { ValidateNumber } from "../../../utils/HandleValidation";
+import ValidateAccountDetails from "./ValidateAccountDetails";
 
 const modalWrapperStyles = {
     position: "absolute",
@@ -32,22 +35,45 @@ const NewAccountModal = ({ open, handleClose }) => {
         TransactionSourcesContext
     );
 
-    const {
-        handleSubmit,
-        control,
-        reset,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            name: "",
-            balance: "0",
-        },
+    const [accountDetails, setAccountDetails] = useState({
+        name: "",
+        balance: "0",
+        type: "bank-account",
     });
+    const [errors, setErrors] = useState({});
+
+    const handleOnChange = (event) => {
+        setAccountDetails((prevDetails) => {
+            return {
+                ...prevDetails,
+                [event.target.name]: event.target.value,
+            };
+        });
+
+        if (_.get(errors, event.target.name))
+            setErrors((prevErrors) => {
+                return _.omit(prevErrors, event.target.name);
+            });
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const errors = ValidateAccountDetails({
+            accountDetails,
+            setErrors,
+        });
+
+        if (!_.size(errors)) onSubmit(accountDetails);
+    };
 
     const handleAddTransactionSource = (data) => {
         const newTransactionSource = _.get(data, "data.transactionSource");
         handleUpdateTransactionSources(newTransactionSource, () => {
-            reset();
+            setAccountDetails({
+                name: "",
+                balance: "0",
+                type: "bank-account",
+            });
             handleClose();
         });
     };
@@ -85,7 +111,7 @@ const NewAccountModal = ({ open, handleClose }) => {
 
                     <Box
                         component="form"
-                        onSubmit={handleSubmit(onSubmit)}
+                        onSubmit={handleSubmit}
                         sx={{
                             display: "flex",
                             flexFlow: "column",
@@ -94,61 +120,50 @@ const NewAccountModal = ({ open, handleClose }) => {
                             mt: 3,
                         }}
                     >
-                        <Controller
+                        <TextField
+                            variant="outlined"
+                            id="name"
                             name="name"
-                            control={control}
-                            rules={{
-                                required: "Account name is required.",
-                            }}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    label="Account name"
-                                    autoComplete="account-name"
-                                    error={_.has(errors, "name")}
-                                    helperText={_.get(errors, "name.message")}
-                                    disabled={isLoading}
-                                />
-                            )}
+                            label="Account name"
+                            value={accountDetails.name}
+                            onChange={handleOnChange}
+                            error={Boolean(_.get(errors, "name"))}
+                            helperText={_.get(errors, "name")}
                         />
 
-                        <Controller
+                        <TextField
+                            variant="outlined"
+                            id="balance"
                             name="balance"
-                            control={control}
-                            rules={{
-                                required: "Account balance is required.",
-                                min: {
-                                    value: 0,
-                                    message:
-                                        "Account balance should be more than 0.",
-                                },
-                                validate: (balance) =>
-                                    ValidateNumber(balance) ||
-                                    "Account balance should be a number",
-                            }}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    label="Account balance"
-                                    autoComplete="account-balance"
-                                    error={_.has(errors, "balance")}
-                                    helperText={_.get(
-                                        errors,
-                                        "balance.message"
-                                    )}
-                                    disabled={isLoading}
-                                />
-                            )}
+                            label="Account balance"
+                            value={accountDetails.balance}
+                            onChange={handleOnChange}
+                            error={Boolean(_.get(errors, "balance"))}
+                            helperText={_.get(errors, "balance")}
                         />
+
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">
+                                Account type
+                            </InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                name="type"
+                                value={accountDetails.type}
+                                label="Account type"
+                                onChange={handleOnChange}
+                            >
+                                <MenuItem value="bank-account">
+                                    Bank Account
+                                </MenuItem>
+                                <MenuItem value="card">Credit Card</MenuItem>
+                            </Select>
+                        </FormControl>
 
                         <Button
                             type="submit"
                             variant="outlined"
-                            disabled={
-                                _.has(errors, "name") ||
-                                _.has(errors, "balance") ||
-                                isLoading
-                            }
+                            disabled={isLoading || Boolean(_.size(errors))}
                         >
                             Add
                         </Button>
