@@ -9,3 +9,11 @@ export const AddTransactionSource_API = (body) => {
         body,
     });
 };
+
+export const FetchTransactionSources_API = (params) => {
+    return request({
+        url: BASE_URL + "/fetch",
+        method: "GET",
+        params,
+    });
+};

@@ -8,10 +8,11 @@ import {
     Typography,
 } from "@mui/material";
 import _ from "lodash";
-import React from "react";
+import React, { useContext } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { AddTransactionSource_API } from "../../../api/TransactionSource.api";
+import { TransactionSourcesContext } from "../../../contexts/TransactionSourcesContext";
 import { ValidateNumber } from "../../../utils/HandleValidation";
 
 const modalWrapperStyles = {
@@ -27,6 +28,10 @@ const modalWrapperStyles = {
 };
 
 const NewAccountModal = ({ open, handleClose }) => {
+    const { handleUpdateTransactionSources } = useContext(
+        TransactionSourcesContext
+    );
+
     const {
         handleSubmit,
         control,
@@ -40,8 +45,12 @@ const NewAccountModal = ({ open, handleClose }) => {
     });
 
     const handleAddTransactionSource = (data) => {
-        reset();
-        handleClose();
+        console.log(data);
+        const newTransactionSource = _.get(data, "data.transactionSource");
+        handleUpdateTransactionSources(newTransactionSource, () => {
+            reset();
+            handleClose();
+        });
     };
 
     const { mutate: addTransactionSourceMutation, isLoading } = useMutation(

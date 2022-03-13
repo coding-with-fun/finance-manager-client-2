@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
+import { TransactionSourcesProvider } from "./contexts/TransactionSourcesContext";
 import { UserDataProvider } from "./contexts/UserDataContext";
 import "./index.css";
 
@@ -21,25 +22,27 @@ const queryClient = new QueryClient();
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
         <UserDataProvider>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <App />
-            </ThemeProvider>
+            <TransactionSourcesProvider>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <App />
+                </ThemeProvider>
 
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss={false}
-                draggable={false}
-                pauseOnHover
-                theme="colored"
-            />
+                <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss={false}
+                    draggable={false}
+                    pauseOnHover
+                    theme="colored"
+                />
 
-            <ReactQueryDevtools initialIsOpen={false} />
+                <ReactQueryDevtools initialIsOpen={false} />
+            </TransactionSourcesProvider>
         </UserDataProvider>
     </QueryClientProvider>,
 
