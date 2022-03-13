@@ -10,47 +10,33 @@ export const TransactionSourcesProvider = ({ children }) => {
     const { isUserAuthenticated } = useContext(UserDataContext);
 
     const [transactionSources, setTransactionSources] = useState([]);
-    const [
-        transactionSourcesPaginationDetails,
-        setTransactionSourcesPaginationDetails,
-    ] = useState({
-        pageNumber: 0,
-        perPage: 5,
-        count: 0,
-        sortField: "createdAt",
-        sortType: "asc",
-    });
+    const [pageNumber, setPageNumber] = useState(0);
+    const [pageSize, setPageSize] = useState(5);
+    const [count, setCount] = useState(0);
 
     const params = {
-        pageNumber: transactionSourcesPaginationDetails.pageNumber,
-        perPage: transactionSourcesPaginationDetails.perPage,
-        sortField: transactionSourcesPaginationDetails.sortField,
-        sortType: transactionSourcesPaginationDetails.sortType,
+        pageNumber,
+        perPage: pageSize,
+        count,
     };
 
-    const { refetch } = useQuery(
-        "fetch-transaction-sources",
+    console.log(params);
+
+    const { refetch: refetchTransactionSources } = useQuery(
+        ["fetch-transaction-sources", params],
         () => FetchTransactionSources_API(params),
         {
             onSuccess: (data) => {
-                const {
-                    pageNumber,
-                    perPage,
-                    sortField,
-                    sortType,
-                    transactionSources,
-                    count,
-                } = _.get(data, "data");
+                const { pageNumber, perPage, transactionSources, count } =
+                    _.get(data, "data");
                 handleSetTransactionSources(transactionSources);
-                handleSetTransactionSourcesPaginationDetails({
-                    pageNumber,
-                    perPage,
-                    sortField,
-                    sortType,
-                    count,
-                });
+
+                setPageNumber(pageNumber);
+                setPageSize(perPage);
+                setCount(count);
             },
             enabled: false,
+            // keepPreviousData: true,
         }
     );
 
@@ -62,29 +48,24 @@ export const TransactionSourcesProvider = ({ children }) => {
 
     const handleUpdateTransactionSources = (data, cb) => {
         setTransactionSources((prevSources) => {
-            return [...prevSources, data];
+            return [...data];
         });
 
         if (cb) cb();
     };
 
-    const handleSetTransactionSourcesPaginationDetails = (data, cb) => {
-        setTransactionSourcesPaginationDetails((prevDetails) => {
-            console.log({
-                ...prevDetails,
-                ...data,
-            });
-            return {
-                ...prevDetails,
-                ...data,
-            };
-        });
+    const handleChangePageNumber = (data, cb) => {
+        setPageNumber(data);
+        if (cb) cb();
+    };
 
+    const handleChangePageSize = (data, cb) => {
+        setPageSize(data);
         if (cb) cb();
     };
 
     useEffect(() => {
-        if (isUserAuthenticated) refetch();
+        if (isUserAuthenticated) refetchTransactionSources();
 
         // eslint-disable-next-line
     }, [isUserAuthenticated]);
@@ -93,11 +74,15 @@ export const TransactionSourcesProvider = ({ children }) => {
         <TransactionSourcesContext.Provider
             value={{
                 transactionSources,
-                transactionSourcesPaginationDetails,
+                pageNumber,
+                pageSize,
+                count,
 
                 handleSetTransactionSources,
                 handleUpdateTransactionSources,
-                handleSetTransactionSourcesPaginationDetails,
+                handleChangePageNumber,
+                handleChangePageSize,
+                refetchTransactionSources,
             }}
         >
             {children}
