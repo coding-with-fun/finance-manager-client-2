@@ -14,8 +14,9 @@ export const TransactionSourcesProvider = ({ children }) => {
         transactionSourcesPaginationDetails,
         setTransactionSourcesPaginationDetails,
     ] = useState({
-        pageNumber: 1,
-        perPage: 1,
+        pageNumber: 0,
+        perPage: 5,
+        count: 0,
         sortField: "createdAt",
         sortType: "asc",
     });
@@ -38,6 +39,7 @@ export const TransactionSourcesProvider = ({ children }) => {
                     sortField,
                     sortType,
                     transactionSources,
+                    count,
                 } = _.get(data, "data");
                 handleSetTransactionSources(transactionSources);
                 handleSetTransactionSourcesPaginationDetails({
@@ -45,6 +47,7 @@ export const TransactionSourcesProvider = ({ children }) => {
                     perPage,
                     sortField,
                     sortType,
+                    count,
                 });
             },
             enabled: false,
@@ -67,9 +70,13 @@ export const TransactionSourcesProvider = ({ children }) => {
 
     const handleSetTransactionSourcesPaginationDetails = (data, cb) => {
         setTransactionSourcesPaginationDetails((prevDetails) => {
+            console.log({
+                ...prevDetails,
+                ...data,
+            });
             return {
                 ...prevDetails,
-                data,
+                ...data,
             };
         });
 

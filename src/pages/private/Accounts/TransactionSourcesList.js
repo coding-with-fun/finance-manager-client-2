@@ -33,15 +33,14 @@ const TransactionSourcesList = () => {
         <Box
             sx={{
                 height: "42.6rem",
+                mt: "2rem",
             }}
         >
             <DataGrid
                 autoHeight
                 pagination
-                count={100}
-                page={transactionSourcesPaginationDetails.pageNumber}
                 pageSize={transactionSourcesPaginationDetails.perPage}
-                rowsPerPageOptions={[5, 10, 20]}
+                rowsPerPageOptions={[1, 2, 5, 10, 20]}
                 onPageSizeChange={(newPageSize) =>
                     handleSetTransactionSourcesPaginationDetails({
                         perPage: newPageSize,
