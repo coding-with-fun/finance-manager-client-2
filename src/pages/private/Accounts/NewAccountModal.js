@@ -45,7 +45,6 @@ const NewAccountModal = ({ open, handleClose }) => {
     });
 
     const handleAddTransactionSource = (data) => {
-        console.log(data);
         const newTransactionSource = _.get(data, "data.transactionSource");
         handleUpdateTransactionSources(newTransactionSource, () => {
             reset();

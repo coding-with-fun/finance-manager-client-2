@@ -1,23 +1,57 @@
-import { Box, Container } from "@mui/material";
-import _ from "lodash";
+import { Box } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import React, { useContext } from "react";
 import { TransactionSourcesContext } from "../../../contexts/TransactionSourcesContext";
 
 const TransactionSourcesList = () => {
-    const { transactionSources } = useContext(TransactionSourcesContext);
+    const {
+        transactionSources,
+        transactionSourcesPaginationDetails,
+        handleSetTransactionSourcesPaginationDetails,
+    } = useContext(TransactionSourcesContext);
+
+    const columns = [
+        { field: "name", headerName: "Name", flex: 1 },
+        { field: "type", headerName: "Account Type", flex: 0.9 },
+        {
+            field: "balance",
+            headerName: "Balance",
+            width: 150,
+            valueFormatter: (params) => {
+                const valueFormatted = Number(params.value).toLocaleString(
+                    "en-IN",
+                    {
+                        maximumFractionDigits: 2,
+                    }
+                );
+                return `${valueFormatted} INR`;
+            },
+        },
+    ];
 
     return (
-        <Container maxWidth="sm">
-            {transactionSources.map((sources) => {
-                return (
-                    <Box key={_.get(sources, "_id")}>
-                        {_.get(sources, "name")}
-                        {_.get(sources, "type")}
-                        {_.get(sources, "balance")}
-                    </Box>
-                );
-            })}
-        </Container>
+        <Box
+            sx={{
+                height: "42.6rem",
+            }}
+        >
+            <DataGrid
+                autoHeight
+                pagination
+                count={100}
+                page={transactionSourcesPaginationDetails.pageNumber}
+                pageSize={transactionSourcesPaginationDetails.perPage}
+                rowsPerPageOptions={[5, 10, 20]}
+                onPageSizeChange={(newPageSize) =>
+                    handleSetTransactionSourcesPaginationDetails({
+                        perPage: newPageSize,
+                    })
+                }
+                rows={transactionSources}
+                columns={columns}
+                getRowId={(row) => row._id}
+            />
+        </Box>
     );
 };
 
